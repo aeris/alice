@@ -4,8 +4,8 @@ class CreateSites < ActiveRecord::Migration[5.1]
 			t.string :url, null: false
 			t.string :name, index: true
 
-			t.binary :reference
-			t.binary :content
+			t.binary :reference, null: false
+			t.binary :content, null: false
 
 			t.belongs_to :group, index: true, foreign_key: true
 			t.belongs_to :template, index: true, foreign_key: true

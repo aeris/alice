@@ -46,7 +46,7 @@ class Site < ApplicationRecord
 	end
 
 	def reference!(content)
-		self.update! reference: content, content: nil, checked_at: Time.now, changed_at: nil, last_error: nil
+		self.update! reference: content, content: content, checked_at: Time.now, changed_at: nil, last_error: nil
 		self.checks.each { |c| c.reference! content }
 	end
 
@@ -63,7 +63,7 @@ class Site < ApplicationRecord
 		state           = :unchanged
 
 		begin
-			reference = Utils.utf8! self.reference
+			reference = Utils.utf8! self.content
 			checks    = self.checks
 			if checks.empty?
 				if reference != content

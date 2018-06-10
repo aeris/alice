@@ -5,7 +5,7 @@ class Check < ApplicationRecord
 	def reference!(content)
 		target    = self.target
 		reference = target.extract content
-		self.update! reference: reference, content: nil, checked_at: Time.now, changed_at: nil, last_error: nil
+		self.update! reference: reference, content: reference, checked_at: Time.now, changed_at: nil, last_error: nil
 	end
 
 	def diff!(content, debug: false)
@@ -16,7 +16,7 @@ class Check < ApplicationRecord
 
 		begin
 			target    = self.target
-			reference = Utils.utf8! self.reference
+			reference = Utils.utf8! self.content
 			content   = target.extract content
 			changed   = reference != content
 			if changed
