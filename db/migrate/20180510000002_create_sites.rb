@@ -4,8 +4,6 @@ class CreateSites < ActiveRecord::Migration[5.1]
 			t.string :url, null: false
 			t.string :name, index: true
 
-			t.string :targets
-
 			t.binary :reference
 			t.binary :content
 

@@ -10,25 +10,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180510000003) do
+ActiveRecord::Schema.define(version: 20180510000004) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "checks", force: :cascade do |t|
+    t.binary "reference"
+    t.binary "content"
+    t.bigint "target_id"
+    t.bigint "site_id"
+    t.string "last_error"
+    t.datetime "checked_at"
+    t.datetime "changed_at"
+    t.index ["site_id"], name: "index_checks_on_site_id"
+    t.index ["target_id"], name: "index_checks_on_target_id"
+  end
 
   create_table "groups", force: :cascade do |t|
     t.string "name", null: false
-    t.string "targets"
-    t.integer "template_id"
+    t.bigint "template_id"
     t.index ["name"], name: "index_groups_on_name", unique: true
     t.index ["template_id"], name: "index_groups_on_template_id"
-    t.index [nil], name: "index_groups_on_template"
   end
 
   create_table "sites", force: :cascade do |t|
     t.string "url", null: false
     t.string "name"
-    t.string "targets"
     t.binary "reference"
     t.binary "content"
-    t.integer "group_id"
-    t.integer "template_id"
+    t.bigint "group_id"
+    t.bigint "template_id"
     t.string "last_error"
     t.datetime "checked_at"
     t.datetime "changed_at"
@@ -38,11 +50,13 @@ ActiveRecord::Schema.define(version: 20180510000003) do
   end
 
   create_table "targets", force: :cascade do |t|
-    t.integer "template_id"
-    t.integer "group_id"
-    t.integer "site_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string "name"
+    t.string "css"
+    t.string "from"
+    t.string "to"
+    t.bigint "template_id"
+    t.bigint "group_id"
+    t.bigint "site_id"
     t.index ["group_id"], name: "index_targets_on_group_id"
     t.index ["site_id"], name: "index_targets_on_site_id"
     t.index ["template_id"], name: "index_targets_on_template_id"
@@ -53,4 +67,12 @@ ActiveRecord::Schema.define(version: 20180510000003) do
     t.index ["name"], name: "index_templates_on_name", unique: true
   end
 
+  add_foreign_key "checks", "sites"
+  add_foreign_key "checks", "targets"
+  add_foreign_key "groups", "templates"
+  add_foreign_key "sites", "groups"
+  add_foreign_key "sites", "templates"
+  add_foreign_key "targets", "groups"
+  add_foreign_key "targets", "sites"
+  add_foreign_key "targets", "templates"
 end

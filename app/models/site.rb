@@ -1,11 +1,14 @@
 class Site < ApplicationRecord
-	attribute :targets, :targets
-
 	belongs_to :group, optional: true
 	belongs_to :template, optional: true
 	has_many :targets
+	has_many :checks
 
 	validates :url, presence: true
+
+	def self.[](url)
+		self.where(url: url).first
+	end
 
 	def self.grab(url)
 		response = HTTParty.get url, timeout: 10.seconds
@@ -27,66 +30,118 @@ class Site < ApplicationRecord
 		tag&.text
 	end
 
-	def all_targets
+	def inherited_targets
 		targets  = self.targets
 		group    = self.group
-		targets  += groups.targets if group
+		targets  += group.targets if group
 		template = self.template
 		targets  = template.targets if template
 		targets
 	end
 
-	def check
+	def create_checks!
+		self.inherited_targets.each do |target|
+			self.checks.create! target: target
+		end
+	end
+
+	def reference!(content)
+		self.update! reference: content, content: nil, checked_at: Time.now, changed_at: nil, last_error: nil
+		self.checks.each { |c| c.reference! content }
+	end
+
+	STATES = %i[unchanged previously_changed changed error].freeze
+
+	def update_state(current, state)
+		current_index = STATES.index current
+		state_index   = STATES.index state
+		current_index < state_index ? state : current
+	end
+
+	def diff!(content, debug: false)
 		self.checked_at = Time.now
-		state           = :no_changes
-		error           = nil
+		state           = :unchanged
 
 		begin
-			reference = self.reference
-
-			response = self.class.grab self.url
-			content  = response.body
-			unless reference
-				self.reference = content
-				state          = :new
-			else
-				self.content = content
-				unchanged    = true
-
-				content_type = response.content_type
-				case content_type
-				when 'text/html'
-					targets = self.targets
-					if targets
-						targets.each do |target|
-							target_content   = target.extract content
-							target_reference = target.extract reference
-							target_unchanged = target_content == target_reference
-							unless target_unchanged
-								unchanged = target_unchanged
-								break
-							end
-						end
-					else
-						unchanged = content == reference
-					end
-				else
-					unchanged = content == reference
+			reference = Utils.utf8! self.reference
+			checks    = self.checks
+			if checks.empty?
+				if reference != content
+					puts Utils.diff reference, content if debug
+					state = :changed
 				end
-
-				unless unchanged
-					self.changed_at = self.checked_at
-					state           = :changes
+			else
+				checks.each do |check|
+					check_state = check.diff! content, debug: debug
+					state       = self.update_state state, check_state
 				end
 			end
+
+			if state == :changed
+				self.content    = content
+				self.changed_at = self.checked_at
+			end
+
 			self.last_error = nil
 		rescue => e
-			self.last_error = e.to_s
-			error           = e
+			$stderr.puts e
+			self.last_error = e
 		end
 
 		self.save!
-		raise error if error
 		state
+	end
+
+	def check(debug: false)
+		return :previously_changed if self.changed_at
+		reference = self.reference
+		response  = self.class.grab self.url
+		content   = response.body
+		# case response.content_type
+		# when 'text/html'
+		# 	content = content.force_encoding 'utf-8'
+		# end
+		unless reference
+			self.reference! content
+			return :reference
+		else
+			return self.diff! content, debug: debug
+		end
+	end
+
+	def recalculate!(debug: false)
+		state = :unchanged
+
+		reference  = self.reference
+		content    = self.content || reference
+		changed_at = self.changed_at
+
+		states = self.checks.collect { |c| c.recalculate! debug: debug }.uniq
+		state  = :changed if states.include? :changed
+		if states.empty? && reference != content
+			state = :changed
+			puts Utils.diff reference, content if debug
+		end
+
+		if state == :changed
+			changed_at ||= self.checked_at
+		else
+			content    = nil
+			changed_at = nil
+		end
+
+		self.update! reference: reference, content: content, changed_at: changed_at
+
+		state
+	end
+
+	def read!
+		return unless self.content
+		self.reference! self.content
+	end
+
+	def reset!
+		self.update! reference: nil, content: nil, checked_at: nil, changed_at: nil, last_error: nil
+		self.checks.each &:clear!
 	end
 end

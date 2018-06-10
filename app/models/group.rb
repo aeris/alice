@@ -1,9 +1,7 @@
 class Group < ApplicationRecord
-	attribute :targets, :targets
-
 	belongs_to :template, optional: true
-	has_many :targets
 	has_many :sites
+	has_many :targets
 
 	validates :name, uniqueness: true
 

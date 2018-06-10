@@ -1,7 +1,6 @@
 class Template < ApplicationRecord
-	attribute :targets, :targets
-
 	has_many :targets
+	has_many :sites
 
 	validates :name, uniqueness: true
 
