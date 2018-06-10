@@ -17,7 +17,7 @@ gem 'diffy'
 
 group :development, :test do
 	gem 'pry-byebug'
-
+	gem 'timecop'
 	gem 'rspec-rails'
 end
 

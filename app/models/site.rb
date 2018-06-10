@@ -50,7 +50,7 @@ class Site < ApplicationRecord
 		self.checks.each { |c| c.reference! content }
 	end
 
-	STATES = %i[unchanged previously_changed changed error].freeze
+	STATES = %i[unchanged changed error].freeze
 
 	def update_state(current, state)
 		current_index = STATES.index current
@@ -93,7 +93,6 @@ class Site < ApplicationRecord
 	end
 
 	def check(debug: false)
-		return :previously_changed if self.changed_at
 		reference = self.reference
 		response  = self.class.grab self.url
 		content   = response.body

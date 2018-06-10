@@ -9,8 +9,6 @@ class Check < ApplicationRecord
 	end
 
 	def diff!(content, debug: false)
-		return :previously_changed if self.changed_at
-
 		self.checked_at = Time.now
 		state           = :unchanged
 

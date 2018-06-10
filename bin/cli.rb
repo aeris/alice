@@ -36,7 +36,6 @@ class App < Thor
 	COLORS = {
 			reference:          :blue,
 			unchanged:          :green,
-			previously_changed: :light_red,
 			changed:            :red,
 			error:              { background: :red }
 	}.freeze

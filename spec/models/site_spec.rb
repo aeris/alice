@@ -1,10 +1,9 @@
-
 RSpec.describe Site, type: :model do
-	REFERENCE_TARGET = '<div id="content">bar</div>'
-	REFERENCE = "<html><body>foo #{REFERENCE_TARGET}</body></html>"
+	REFERENCE_TARGET      = '<div id="content">bar</div>'
+	REFERENCE             = "<html><body>foo #{REFERENCE_TARGET}</body></html>"
 	CHANGE_OUTSIDE_TARGET = '<html><body>baz <div id="content">bar</div></body></html>'
-	CHANGE_TARGET = '<div id="content">baz</div>'
-	CHANGE_INSIDE_TARGET = "<html><body>foo #{CHANGE_TARGET}</body></html>"
+	CHANGE_TARGET         = '<div id="content">baz</div>'
+	CHANGE_INSIDE_TARGET  = "<html><body>foo #{CHANGE_TARGET}</body></html>"
 
 	let :site do
 		Site.create! url: 'http://localhost/'
@@ -24,13 +23,17 @@ RSpec.describe Site, type: :model do
 	end
 
 	def check!(content)
-		site.reference! REFERENCE
 		stub_page content
 		site.check
 	end
 
+	def reference_and_check!(content)
+		site.reference! REFERENCE
+		self.check! content
+	end
+
 	it 'must not change if no change with no check' do
-		status = check! REFERENCE
+		status = reference_and_check! REFERENCE
 		expect(status).to be :unchanged
 
 		expect(site.changed_at).to be_nil
@@ -40,7 +43,7 @@ RSpec.describe Site, type: :model do
 	it 'must not change if no change with checks' do
 		check = add_check css: '#content'
 
-		status = check! REFERENCE
+		status = reference_and_check! REFERENCE
 		expect(status).to be :unchanged
 
 		expect(site.changed_at).to be_nil
@@ -51,16 +54,16 @@ RSpec.describe Site, type: :model do
 	end
 
 	it 'must change if change with no check' do
-		status = check! CHANGE_OUTSIDE_TARGET
+		status = reference_and_check! CHANGE_OUTSIDE_TARGET
 		expect(status).to be :changed
 
 		expect(site.changed_at).not_to be_nil
-		expect(site.content).not_to eq REFERENCE
+		expect(site.content).to eq CHANGE_OUTSIDE_TARGET
 	end
 
 	it 'must not change if change but no check changed' do
-		check = add_check css: '#content'
-		status = check! CHANGE_OUTSIDE_TARGET
+		check  = add_check css: '#content'
+		status = reference_and_check! CHANGE_OUTSIDE_TARGET
 		expect(status).to be :unchanged
 
 		expect(site.changed_at).to be_nil
@@ -71,8 +74,8 @@ RSpec.describe Site, type: :model do
 	end
 
 	it 'must change if check changed' do
-		check = add_check css: '#content'
-		status = check! CHANGE_INSIDE_TARGET
+		check  = add_check css: '#content'
+		status = reference_and_check! CHANGE_INSIDE_TARGET
 		expect(status).to be :changed
 
 		expect(site.changed_at).not_to be_nil
@@ -80,5 +83,35 @@ RSpec.describe Site, type: :model do
 
 		expect(check.changed_at).not_to be_nil
 		expect(check.content).to eq CHANGE_TARGET
+	end
+
+	it 'must stay changed if no change after a change' do
+		first_date  = Date.parse '2018-01-01'
+		second_date = first_date + 1
+		third_date  = second_date + 1
+
+		Timecop.freeze first_date do
+			status = reference_and_check! CHANGE_OUTSIDE_TARGET
+			expect(status).to be :changed
+
+			expect(site.changed_at).to eq first_date
+			expect(site.content).to eq CHANGE_OUTSIDE_TARGET
+		end
+
+		Timecop.freeze second_date do
+			status = check! CHANGE_OUTSIDE_TARGET
+			expect(status).to be :unchanged
+
+			expect(site.changed_at).to eq first_date
+			expect(site.content).to eq CHANGE_OUTSIDE_TARGET
+		end
+
+		Timecop.freeze third_date do
+			status = check! CHANGE_INSIDE_TARGET
+			expect(status).to be :changed
+
+			expect(site.changed_at).to eq third_date
+			expect(site.content).to eq CHANGE_INSIDE_TARGET
+		end
 	end
 end
