@@ -16,8 +16,8 @@ ActiveRecord::Schema.define(version: 20180510000004) do
   enable_extension "plpgsql"
 
   create_table "checks", force: :cascade do |t|
-    t.binary "reference"
-    t.binary "content"
+    t.text "reference"
+    t.text "content"
     t.bigint "target_id"
     t.bigint "site_id"
     t.string "last_error"
@@ -37,8 +37,8 @@ ActiveRecord::Schema.define(version: 20180510000004) do
   create_table "sites", force: :cascade do |t|
     t.string "url", null: false
     t.string "name"
-    t.binary "reference"
-    t.binary "content"
+    t.text "reference"
+    t.text "content"
     t.bigint "group_id"
     t.bigint "template_id"
     t.string "last_error"

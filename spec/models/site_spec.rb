@@ -19,7 +19,7 @@ RSpec.describe Site, type: :model do
 	end
 
 	def stub_page(content)
-		allow(Site).to receive(:grab) { OpenStruct.new body: content }
+		allow(site).to receive(:grab) { OpenStruct.new body: content }
 	end
 
 	def check!(content)

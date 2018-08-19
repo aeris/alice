@@ -3,6 +3,7 @@ require 'ostruct'
 require 'optparse'
 
 # Force resolution to avoid cycle in autoloading
+Http
 Check
 Target
 Site

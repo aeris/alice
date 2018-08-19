@@ -10,24 +10,8 @@ class Site < ApplicationRecord
 		self.where(url: url).first
 	end
 
-	def self.grab(url)
-		response = HTTParty.get url, timeout: 10.seconds
-		raise "Receive #{response.code}" unless response.success?
-		response
-	end
-
-	def self.html(url)
-		response     = self.grab url
-		content_type = response.content_type
-		raise "Expecting #{'text/html'.colorize :yellow}, got #{content_type.colorize :yellow}" unless content_type == 'text/html'
-		content = response.body
-		Nokogiri::HTML.parse content
-	end
-
-	def self.title(url)
-		html = self.html url
-		tag  = html.at 'head title'
-		tag&.text
+	def grab
+		Http.new self.url
 	end
 
 	def inherited_targets
@@ -58,12 +42,18 @@ class Site < ApplicationRecord
 		current_index < state_index ? state : current
 	end
 
+	def diff(context: 3, **kwargs)
+		reference = self.reference
+		content   = self.content
+		Diffy::Diff.new reference, content, context: context, **kwargs
+	end
+
 	def diff!(content, debug: false)
 		self.checked_at = Time.now
 		state           = :unchanged
 
 		begin
-			reference = Utils.utf8! self.content
+			reference = self.content
 			checks    = self.checks
 			if checks.empty?
 				if reference != content
@@ -94,12 +84,7 @@ class Site < ApplicationRecord
 
 	def check(debug: false)
 		reference = self.reference
-		response  = self.class.grab self.url
-		content   = response.body
-		# case response.content_type
-		# when 'text/html'
-		# 	content = content.force_encoding 'utf-8'
-		# end
+		content   = self.grab.body
 		unless reference
 			self.reference! content
 			return :reference

@@ -13,8 +13,8 @@ class Check < ApplicationRecord
 		state           = :unchanged
 
 		begin
-			target    = self.target
-			reference = Utils.utf8! self.content
+			target = self.target
+			reference = self.content
 			content   = target.extract content
 			changed   = reference != content
 			if changed
@@ -25,7 +25,6 @@ class Check < ApplicationRecord
 			end
 			self.last_error = nil
 		rescue => e
-			raise
 			$stderr.puts e
 			state           = :error
 			self.last_error = e
@@ -33,6 +32,13 @@ class Check < ApplicationRecord
 
 		self.save!
 		state
+	end
+
+	def diff(context: 3, **kwargs)
+		reference = self.reference
+		target    = self.target
+		content   = target.extract self.content
+		Diffy::Diff.new reference, content, context: context, **kwargs
 	end
 
 	def recalculate!(debug: false)
