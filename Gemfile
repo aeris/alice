@@ -15,6 +15,15 @@ gem 'pry-rails'
 gem 'parallel'
 gem 'diffy'
 
+gem 'therubyracer', platforms: :ruby
+# gem 'sass-rails'
+gem 'sassc-rails'
+gem 'uglifier'
+gem 'coffee-rails'
+
+gem 'bulma-rails'
+gem 'jquery-rails'
+
 group :development, :test do
 	gem 'pry-byebug'
 	gem 'timecop'
@@ -23,12 +32,19 @@ group :development, :test do
 end
 
 group :development do
-	gem 'listen', '>= 3.0.5', '< 3.2'
+	gem 'web-console'
+
+	gem 'listen'
 	gem 'better_errors'
 	gem 'binding_of_caller'
 
 	gem 'spring'
-	gem 'spring-watcher-listen', '~> 2.0.0'
+	gem 'spring-watcher-listen'
+
+	gem 'guard', require: false
+	gem 'guard-livereload', require: false
+	gem 'rack-livereload'
+	gem 'guard-rails', require: false
 end
 
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]

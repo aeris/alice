@@ -17,5 +17,7 @@
 !/log/.keep
 !/tmp/.keep
 
+/public/assets/
+
 .byebug_history
 .generators
