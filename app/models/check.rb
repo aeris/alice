@@ -2,72 +2,28 @@ class Check < ApplicationRecord
 	belongs_to :site
 	belongs_to :target
 
-	def reference!(content)
-		target    = self.target
-		reference = target.extract content
-		self.update! reference: reference, content: reference, checked_at: Time.now, changed_at: nil, last_error: nil
+	def to_s
+		self.target.to_s
 	end
 
-	def diff!(content, debug: false)
-		self.checked_at = Time.now
-		state           = :unchanged
-
-		begin
-			target = self.target
-			reference = self.content
-			content   = target.extract content
-			changed   = reference != content
-			if changed
-				puts Utils.diff reference, content if debug
-				state           = :changed
-				self.content    = content
-				self.changed_at = self.checked_at
-			end
-			self.last_error = nil
-		rescue => e
-			$stderr.puts e
-			state           = :error
-			self.last_error = e
-		end
-
-		self.save!
-		state
-	end
-
-	def diff(context: 3, **kwargs)
-		reference = self.reference
+	def changed?(reference, content, debug: false)
 		target    = self.target
-		content   = target.extract self.content
-		Diffy::Diff.new reference, content, context: context, **kwargs
-	end
-
-	def recalculate!(debug: false)
-		state = :unchanged
-
-		target    = self.target
-		reference = self.site.reference
-		content   = self.site.content || reference
-
 		reference = target.extract reference
 		content   = target.extract content
+		changed   = reference != content
 
-		changed_at = self.changed_at
-
-		if reference == content
-			content    = nil
-			changed_at = nil
-		else
+		if changed
 			puts Utils.diff reference, content if debug
-			state      = :changed
-			changed_at ||= self.checked_at
+			return true
 		end
 
-		self.update! reference: reference, content: content, changed_at: changed_at
-
-		state
+		false
 	end
 
-	def clear!
-		self.update! reference: nil, content: nil, checked_at: nil, changed_at: nil, last_error: nil
+	def diff(reference, content, context: 3, **kwargs)
+		target    = self.target
+		reference = target.extract reference
+		content   = target.extract content
+		Diffy::Diff.new reference, content, context: context, **kwargs
 	end
 end

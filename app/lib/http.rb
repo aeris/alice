@@ -57,9 +57,33 @@ class Http
 
 	protected
 
+	DATE_FORMAT = '%Y%m%d_%H%M%S'.freeze
+
+	def cache(response)
+		return unless ENV['DEBUG_HTTP']
+
+		prefix = Digest::SHA256.hexdigest @url
+		dir    = File.join Rails.root, 'tmp', 'cache', 'http'
+		FileUtils.mkdir_p dirs unless Dir.exist? dir
+
+		body = response.body
+		last = Dir[File.join dir, "#{prefix}_*"].sort.last
+		if last
+			old = Digest::SHA256.file(last).hexdigest
+			new = Digest::SHA256.hexdigest body
+			return if old == new
+		end
+
+		time = Time.now.strftime DATE_FORMAT
+		file = prefix + '_' + time
+		file = File.join dir, file
+		File.binwrite file, body
+	end
+
 	def grab
 		response = HTTParty.get @url, timeout: 10.seconds
 		raise "Receive #{response.code}" unless response.success?
+		self.cache response
 		response
 	end
 
