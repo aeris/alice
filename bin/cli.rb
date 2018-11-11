@@ -4,7 +4,6 @@ require 'optparse'
 
 # Force resolution to avoid cycle in autoloading
 Http
-Check
 Target
 Site
 Group
@@ -30,10 +29,6 @@ def display(item)
 end
 
 class App < Thor
-	desc 'check <url>*', 'Check given sites for changes'
-	method_option :reset, type: :boolean, default: false, aliases: '-r', desc: 'Reset sites before check'
-	method_option :debug, type: :boolean, default: false, aliases: '-d', desc: 'Activate debug'
-
 	COLORS = {
 			reference: :blue,
 			unchanged: :green,
@@ -41,14 +36,16 @@ class App < Thor
 			error:     { background: :red }
 	}.freeze
 
+	desc 'check <url>*', 'Check given sites for changes'
+	method_option :debug, type: :boolean, default: false, aliases: '-d', desc: 'Activate debug'
+
+
 	def check(urls = nil)
-		reset = options[:reset]
 		debug = options[:debug]
 
 		results = Hash.new 0
 
 		self.process urls do |site|
-			site.reset! if reset
 			result          = site.check! debug: debug
 			results[result] += 1
 			color           = COLORS[result]
@@ -67,68 +64,45 @@ class App < Thor
 		self.process urls, &:read!
 	end
 
-	desc 'clear <url>*', 'Clear given sites'
+	desc 'redo <url>*', 'Redo diff from cache'
 
-	def clear(urls = nil)
-		self.process urls, &:clear!
-	end
-
-	desc 'diff <url>*', 'Display diff of the given sites'
-
-	def diff(urls = nil)
-		sites = self.sites urls
-		sites.each do |site|
-			next unless site.changed_at
-			puts "#{site.url.colorize :yellow}"
-			checks = site.checks
-			display site if checks.empty?
-			checks.each do |check|
-				next unless check.changed_at
-				puts "  #{check.target}"
-				display check
-			end
-		end
-	end
-
-	desc 'recalculate <url>*', 'Recalculate state of given sites'
-	method_option :debug, type: :boolean, default: false, aliases: '-d', desc: 'Activate debug'
-
-	def recalculate(urls = nil)
-		debug = options[:debug]
-		results = Hash.new 0
-
+	def redo(urls = nil)
+		cache = 'tmp/cache/http'
 		self.process urls do |site|
-			result = site.recalculate! debug: debug
-			color  = COLORS[result]
-			results[result] += 1
-			result.to_s.colorize color
+			site._changes.delete_all
+			reference = nil
+			fp        = Http.prefix site.url
+			Dir["#{cache}/#{fp}_*"].sort.each do |file|
+				name    = File.basename file
+				date    = name.split('_', 2).last
+				date    = DateTime.strptime date, Http::DATE_FORMAT
+				content = File.read file
+
+				unless reference
+					site.update! reference: content
+				else
+					status = site.diff! reference, content, date: date
+					ap site: site.url, date: date, status: status
+				end
+				reference = content
+			end
+			nil
 		end
-
-		results.each do |k, v|
-			color = COLORS[k]
-			puts "#{k.to_s.colorize color}: #{v}"
-		end
 	end
 
-	desc 'reset <url>*', 'Reset state of given sites'
-
-	def reset(urls = nil)
-		self.process urls, &:reset!
-	end
-
-	desc 'redo <url> <date1> <date2>', 'Redo check from cache'
-
-	def redo(url, date1 = nil, date2 = nil)
-		site      = Site.where(url: url).first
-		fp        = Digest::SHA256.hexdigest url
-		dir       = File.join Rails.root, 'tmp/cache/http'
-		reference = File.join dir, "#{fp}_#{date1}"
-		reference = File.read reference
-		content   = File.join dir, "#{fp}_#{date2}"
-		content   = File.read content
-
-		ap site.changed? reference, content, debug: true
-	end
+	# desc 'redo <url> <date1> <date2>', 'Redo check from cache'
+	#
+	# def redo(url, date1 = nil, date2 = nil)
+	# 	site      = Site.where(url: url).first
+	# 	fp        = Digest::SHA256.hexdigest url
+	# 	dir       = File.join Rails.root, 'tmp/cache/http'
+	# 	reference = File.join dir, "#{fp}_#{date1}"
+	# 	reference = File.read reference
+	# 	content   = File.join dir, "#{fp}_#{date2}"
+	# 	content   = File.read content
+	#
+	# 	ap site.changed? reference, content, debug: true
+	# end
 
 	protected
 
@@ -139,7 +113,7 @@ class App < Thor
 
 	def process(urls)
 		sites = self.sites urls
-		Parallel.each sites, in_threads: 16 do |site|
+		Parallel.each sites, in_threads: 1 do |site|
 			ActiveRecord::Base.transaction do
 				url = site.url.colorize :yellow
 				begin
@@ -148,6 +122,7 @@ class App < Thor
 					result
 				rescue => e
 					puts "#{url} #{e.to_s.colorize :red}"
+					raise
 					nil
 				end
 			end

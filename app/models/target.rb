@@ -5,8 +5,9 @@ class Target < ApplicationRecord
 	has_many :checks
 
 	def to_s
+		return self.name if self.name
+
 		s = []
-		s << self.name if self.name
 		s << "from: #{self.from}" if self.from
 		s << "to: #{self.to}" if self.to
 		s << "css: #{self.css}" if self.css
@@ -55,5 +56,24 @@ class Target < ApplicationRecord
 		content = self.extract_boundary content
 		content = self.extract_css content
 		content
+	end
+
+	def content_changed?(reference, content, debug: false)
+		reference = self.extract reference
+		content   = self.extract content
+		changed   = reference != content
+
+		if changed
+			puts Utils.diff reference, content if debug
+			return true
+		end
+
+		false
+	end
+
+	def diff(reference, content, context: 3, **kwargs)
+		reference = self.extract reference
+		content   = self.extract content
+		Diffy::Diff.new reference, content, context: context, **kwargs
 	end
 end

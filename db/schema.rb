@@ -10,22 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180510000004) do
+ActiveRecord::Schema.define(version: 2018_05_10_000003) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "checks", force: :cascade do |t|
-    t.text "reference"
-    t.text "content"
-    t.bigint "target_id"
-    t.bigint "site_id"
-    t.string "last_error"
-    t.datetime "checked_at"
-    t.datetime "changed_at"
-    t.index ["site_id"], name: "index_checks_on_site_id"
-    t.index ["target_id"], name: "index_checks_on_target_id"
-  end
 
   create_table "groups", force: :cascade do |t|
     t.string "name", null: false
@@ -38,12 +26,10 @@ ActiveRecord::Schema.define(version: 20180510000004) do
     t.string "url", null: false
     t.string "name"
     t.text "reference"
-    t.text "content"
     t.bigint "group_id"
     t.bigint "template_id"
     t.string "last_error"
     t.datetime "checked_at"
-    t.datetime "changed_at"
     t.index ["group_id"], name: "index_sites_on_group_id"
     t.index ["name"], name: "index_sites_on_name"
     t.index ["template_id"], name: "index_sites_on_template_id"
@@ -67,8 +53,6 @@ ActiveRecord::Schema.define(version: 20180510000004) do
     t.index ["name"], name: "index_templates_on_name", unique: true
   end
 
-  add_foreign_key "checks", "sites"
-  add_foreign_key "checks", "targets"
   add_foreign_key "groups", "templates"
   add_foreign_key "sites", "groups"
   add_foreign_key "sites", "templates"

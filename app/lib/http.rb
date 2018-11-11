@@ -59,12 +59,16 @@ class Http
 
 	DATE_FORMAT = '%Y%m%d_%H%M%S'.freeze
 
+	def self.prefix(url)
+		Digest::SHA256.hexdigest url
+	end
+
 	def cache(response)
 		return unless ENV['DEBUG_HTTP']
 
-		prefix = Digest::SHA256.hexdigest @url
+		prefix = self.class.prefix @url
 		dir    = File.join Rails.root, 'tmp', 'cache', 'http'
-		FileUtils.mkdir_p dirs unless Dir.exist? dir
+		FileUtils.mkdir_p dir unless Dir.exist? dir
 
 		body = response.body
 		last = Dir[File.join dir, "#{prefix}_*"].sort.last

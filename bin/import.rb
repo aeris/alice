@@ -81,7 +81,6 @@ def import_sites(sites, group = nil, skip_title: true)
 
 			site = Site.create! url: url, name: name, group: group
 			create_targets site, params
-			site.create_checks!
 		rescue => e
 			$stderr.puts "Unable to import site #{url.colorize :yellow}: #{e.to_s.colorize :red}"
 			raise
@@ -90,7 +89,6 @@ def import_sites(sites, group = nil, skip_title: true)
 end
 
 ActiveRecord::Base.transaction do
-	Check.destroy_all
 	Target.destroy_all
 	Site.destroy_all
 	Group.destroy_all
