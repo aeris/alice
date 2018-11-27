@@ -24,22 +24,22 @@ RSpec.describe Site, type: :model do
 
 			expect(site.changed_at).not_to be_nil
 
-			# changes = site._changes
-			# expect(changes.size).to be 1
-			# change = changes.first
+			diffs = site.diffs
+			expect(diffs.size).to be 1
+			# diff = diffs.first
 			#
-			# expect(change.from).to eq reference
-			# expect(change.to).to eq content
+			# expect(diff.from).to eq reference
+			# expect(diff.to).to eq content
 		end
 
 		def expect_unchanged(content, changed_at = nil)
 			status = self.check! content
 			expect(status).to be :unchanged
 
-			# expect(site.changed_at).to eq changed_at
-			#
-			# changes = site._changes
-			# expect(changes.size).to be 0
+			expect(site.changed_at).to eq changed_at
+
+			diffs = site.diffs
+			expect(diffs.size).to be 0
 		end
 
 		def add_target(**args)
@@ -52,7 +52,7 @@ RSpec.describe Site, type: :model do
 
 		def check!(content)
 			stub_page content
-			# site._changes.delete_all
+			site.diffs.delete_all
 			site.check!
 		end
 

@@ -11,6 +11,7 @@ class CreateSites < ActiveRecord::Migration[5.1]
 
 			t.string :last_error
 			t.datetime :checked_at
+			t.datetime :changed_at
 		end
 	end
 end

@@ -14,6 +14,15 @@ class Target < ApplicationRecord
 		s.join ' '
 	end
 
+	def to_h
+		{
+				name: self.name,
+				from: self.from,
+				to:   self.to,
+				css:  self.css
+		}.compact
+	end
+
 	def extract_boundary(content)
 		return nil unless content
 		if self.from
@@ -33,7 +42,7 @@ class Target < ApplicationRecord
 				return nil
 				raise "Unable to find `to` #{self.to}"
 			end
-			content = content[0..i+self.to.size]
+			content = content[0..i + self.to.size]
 		end
 		content
 	end
@@ -58,22 +67,9 @@ class Target < ApplicationRecord
 		content
 	end
 
-	def content_changed?(reference, content, debug: false)
+	def diff(reference, content)
 		reference = self.extract reference
 		content   = self.extract content
-		changed   = reference != content
-
-		if changed
-			puts Utils.diff reference, content if debug
-			return true
-		end
-
-		false
-	end
-
-	def diff(reference, content, context: 3, **kwargs)
-		reference = self.extract reference
-		content   = self.extract content
-		Diffy::Diff.new reference, content, context: context, **kwargs
+		Diffy::Diff.diff reference, content
 	end
 end

@@ -2,6 +2,7 @@ class Site < ApplicationRecord
 	belongs_to :group, optional: true
 	belongs_to :template, optional: true
 	has_many :targets
+	has_many :diffs
 
 	validates :url, presence: true
 
@@ -22,44 +23,46 @@ class Site < ApplicationRecord
 		targets
 	end
 
-	def diff(context: 3, **kwargs)
-		reference = self.reference
-		content   = self.content
-		Diffy::Diff.new reference, content, context: context, **kwargs
-	end
-
-	def content_changed?(reference, content, debug: false)
+	def diff(reference, content)
 		targets = self.all_targets
 		if targets.empty?
-			if reference != content
-				puts Utils.diff reference, content if debug
-				return true
+			[Diffy::Diff.diff(reference, content)]
+		else
+			targets.collect do |target|
+				diff = target.diff reference, content
+				next nil unless diff
+				[target, diff]
 			end
-			return false
-		end
-
-		targets.each do |target|
-			changed = target.content_changed? reference, content, debug: debug
-			return true if changed
-		end
-
-		false
+		end.compact
 	end
 
-	def diff!(reference, content, date: Time.now, debug: false)
+	def diff!(reference, content, date: Time.now)
 		self.checked_at = date
 		state           = :unchanged
 
 		begin
-			changed = self.content_changed? reference, content, debug: debug
-			if changed
+			diffs = self.diff reference, content
+			unless diffs.empty?
 				self.reference  = content
 				self.changed_at = self.checked_at
 				state           = :changed
+
+				diffs = diffs.collect do |diff|
+					case diff
+					when Diffy::Diff
+						{ diff: diff.dump }
+					else
+						target, diff = diff
+						{
+								target: target.to_h,
+								diff:   diff.dump
+						}
+					end
+				end
+				self.diffs.create! content: diffs
 			end
 			self.last_error = nil
 		rescue => e
-			raise
 			$stderr.puts e
 			self.last_error = e
 			state           = :error
@@ -69,16 +72,16 @@ class Site < ApplicationRecord
 		state
 	end
 
-	def check!(debug: false)
+	def check!
 		grab    = self.grab
 		content = grab.body
 		self.update! name: grab.title unless self.name
 
 		unless self.reference
 			self.update! reference: content
-			return :reference
+			:reference
 		else
-			return self.diff! self.reference, content, debug: debug
+			self.diff! self.reference, content
 		end
 	end
 end
