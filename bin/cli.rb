@@ -37,16 +37,12 @@ class App < Thor
 	}.freeze
 
 	desc 'check <url>*', 'Check given sites for changes'
-	method_option :debug, type: :boolean, default: false, aliases: '-d', desc: 'Activate debug'
-
 
 	def check(urls = nil)
-		debug = options[:debug]
-
 		results = Hash.new 0
 
 		self.process urls do |site|
-			result          = site.check! debug: debug
+			result          = site.check!
 			results[result] += 1
 			color           = COLORS[result]
 			result.to_s.colorize color
