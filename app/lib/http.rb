@@ -59,16 +59,17 @@ class Http
 		prefix = self.class.prefix @url
 
 		body = response.body
-		last = Dir[File.join dir, "#{prefix}_*"].sort.last
+		last = Dir[File.join dir, "#{prefix}_*.xz"].sort.last
 		if last
-			old = Digest::SHA256.file(last).hexdigest
+			last = self.class.cache last
+			old = Digest::SHA256.hexdigest last
 			new = Digest::SHA256.hexdigest body
 			return if old == new
 		end
 
 		time = Time.now.strftime DATE_FORMAT
 		file = prefix + '_' + time + '.xz'
-		file = File.join dir, file
+		file = File.join HTTP_CACHE_DIR, file
 		body = XZ.compress body, level: 9
 		File.binwrite file, body
 	end

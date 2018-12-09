@@ -28,6 +28,8 @@ module Webmon
 		# Middleware like session, flash, cookies can be added back manually.
 		# Skip views, helpers and assets when generating a new resource.
 		# config.api_only = true
+		#
+		config.autoload_paths += %w(app/models/attributes)
 
 		config.assets.precompile << Proc.new { |_, fn| fn =~ /vendor\/assets\/images/ }
 	end

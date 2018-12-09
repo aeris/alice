@@ -3,6 +3,7 @@ class Site < ApplicationRecord
 	belongs_to :template, optional: true
 	has_many :targets, dependent: :delete_all
 	has_many :diffs, dependent: :delete_all
+	attribute :reference, :compressed_text
 
 	validates :url, presence: true
 
@@ -59,7 +60,7 @@ class Site < ApplicationRecord
 						}
 					end
 				end
-				self.diffs.create! content: diffs
+				self.diffs.create! content: diffs, created_at: date
 			end
 			self.last_error = nil
 		rescue => e

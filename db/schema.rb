@@ -32,7 +32,7 @@ ActiveRecord::Schema.define(version: 2018_11_27_204747) do
   create_table "sites", force: :cascade do |t|
     t.string "url", null: false
     t.string "name"
-    t.text "reference"
+    t.binary "reference"
     t.bigint "group_id"
     t.bigint "template_id"
     t.string "last_error"
