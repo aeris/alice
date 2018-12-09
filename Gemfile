@@ -1,7 +1,10 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 5.1.6'
-gem 'puma', '~> 3.7'
+gem 'rails'
+gem 'puma'
+gem 'dotenv-rails'
+gem 'bootsnap', require: false
+gem 'sentry-raven'
 
 gem 'sqlite3'
 gem 'pg'
@@ -14,10 +17,10 @@ gem 'colorize'
 gem 'pry-rails'
 gem 'parallel'
 gem 'diffy'
+gem 'ruby-xz'
 
 gem 'therubyracer', platforms: :ruby
-# gem 'sass-rails'
-gem 'sassc-rails'
+gem 'sass-rails'
 gem 'uglifier'
 gem 'coffee-rails'
 
