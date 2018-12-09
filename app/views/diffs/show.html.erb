@@ -1,0 +1,49 @@
+<div class="autogrid txtcenter">
+	<% (-3..3).each do |n|
+		date = @date + n %>
+		<% if @all_dates.include?(date) %>
+			<%= content_tag :div, class: (:current if @date == date) do %>
+				<%= link_to l(date), diff_path(date) %>
+			<% end %>
+		<% else %>
+			<%= content_tag :div, class: (:nodata) do %>
+				<%= link_to l(date), diff_path(date) %>
+			<%end %>
+		<% end %>
+	<% end %>
+</div>
+
+<h1 id="top">Changes for <%= l @date %></h1>
+
+<% if @diffs.empty? %>
+	<div class="alert--info">No changes found!</div>
+<% end %>
+
+<% @diffs.each do |diff|
+	site = diff.site %>
+	<div class="grid-10">
+		<div class="col-9">
+			<h3><%= link_to (site.name || site.url), site.url %></h3>
+		</div>
+		<div class="txtright">
+			<%= link_to "↑ Top ↑", diffs_path(anchor: :top) %>
+		</div>
+	</div>
+	<ul class="unstyled mls">
+		<% diff.content.each do |chunk| %>
+			<li>
+				<%=
+					target = chunk['target']
+					if target
+						target = Target.from_h target
+						content_tag :h4, target
+					end
+				%>
+				<%=
+					chunk = chunk['diff']
+					raw Diffy::Diff.load(chunk).to_s :html
+				%>
+			</li>
+		<% end %>
+	</ul>
+<% end %>

@@ -1,0 +1,19 @@
+$main-color: #080024; // colorname Black Russian
+$main-color-contrast: #b34edc; //colorname Heliotrope
+
+$header-bg-color: $main-color;
+$header-bg-color-contrast: $main-color-contrast;
+
+$border-color-base: darken($main-color-contrast, 25%);
+
+$link-color-base: lighten($main-color, 15%);
+$link-color-base-hover: darken($main-color-contrast, 25%);
+
+// titres
+
+$h1-text-color: darken($main-color-contrast, 30%);
+$h2-text-color: darken($main-color-contrast, 40%);
+$h3-text-color: darken($main-color-contrast, 50%);
+$h4-text-color: darken($main-color-contrast, 60%);
+$h5-text-color: darken($main-color-contrast, 70%);
+$h6-text-color: darken($main-color-contrast, 80%);

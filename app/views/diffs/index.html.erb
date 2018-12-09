@@ -1,31 +1,3 @@
-<h1>Recent changes</h1>
+<h1 id="top">Changes for <%= l last.created_at.to_date %></h1>
 
-<% last_date = nil %>
-<% @diffs.each do |diff| %>
-	<%
-		site = diff.site
-		date = diff.created_at.to_date
-		unless date == last_date
-			last_date = date %>
-		<h2><%= l date %></h2>
-	<% end %>
-	<h3><%= link_to (site.name || site.url), site.url %></h3>
-	<ul>
-		<% diff.content.each do |chunk| %>
-			<li>
-				<%=
-					target = chunk['target']
-					puts target
-					if target
-						target = Target.from_h target
-						content_tag :h4, target
-					end
-				%>
-				<%=
-					chunk = chunk['diff']
-					raw Diffy::Diff.load(chunk).to_s :html
-				%>
-			</li>
-		<% end %>
-	</ul>
-<% end %>
+<div class="alert--info">No changes found!</div>
