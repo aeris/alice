@@ -1,3 +1,5 @@
+require 'xz'
+
 class Http
 	def initialize(url)
 		@url      = url
@@ -17,34 +19,14 @@ class Http
 	end
 
 	def title
-		html = self.parse
+		html = self.html
 		return nil unless html
-		tag = html.at 'head title'
+		tag = html.parse.at 'head title'
 		tag&.text
 	end
 
 	def charset
-		return nil unless self.html?
-
-		body = @response.body
-		html = Nokogiri::HTML.parse body
-
-		# Content-Type charset seems already processed by HTTParty
-		# charset = @response.headers['content-type']
-		# charset = /text\/html;\s*charset=(.*)/i.match charset
-		# return charset[1] if charset
-
-		charset = html.at 'head meta[charset]'
-		return charset['charset'] if charset
-
-		charset = html.at 'head meta[http-equiv="Content-Type"]'
-		if charset
-			charset = charset['content']
-			charset = /text\/html;\s*charset=(.*)/i.match charset
-			return charset[1] if charset
-		end
-
-		nil
+		self.html&.charset
 	end
 
 	def body
@@ -57,18 +39,24 @@ class Http
 
 	protected
 
+	def html
+		return nil unless self.html?
+		@html ||= Html.new @response.body
+	end
+
 	DATE_FORMAT = '%Y%m%d_%H%M%S'.freeze
 
 	def self.prefix(url)
 		Digest::SHA256.hexdigest url
 	end
 
+	HTTP_CACHE_DIR = File.join Rails.root, 'tmp', 'cache', 'http'
+	FileUtils.mkdir_p HTTP_CACHE_DIR unless Dir.exist? HTTP_CACHE_DIR
+
 	def cache(response)
 		return unless ENV['DEBUG_HTTP']
 
 		prefix = self.class.prefix @url
-		dir    = File.join Rails.root, 'tmp', 'cache', 'http'
-		FileUtils.mkdir_p dir unless Dir.exist? dir
 
 		body = response.body
 		last = Dir[File.join dir, "#{prefix}_*"].sort.last
@@ -79,9 +67,20 @@ class Http
 		end
 
 		time = Time.now.strftime DATE_FORMAT
-		file = prefix + '_' + time
+		file = prefix + '_' + time + '.xz'
 		file = File.join dir, file
+		body = XZ.compress body, level: 9
 		File.binwrite file, body
+	end
+
+	def self.cache(file)
+		body = File.binread file
+		XZ.decompress body
+	end
+
+	def self.caches(url)
+		prefix        = self.prefix url
+		Dir["#{HTTP_CACHE_DIR}/#{prefix}_*.xz"]
 	end
 
 	def grab

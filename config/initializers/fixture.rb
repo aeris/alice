@@ -9,7 +9,7 @@ module Diffy
 			self
 		end
 
-		def self.dump(diff, options = {})
+		def self.load(diff, options = {})
 			self.new(nil, nil, options).load diff
 		end
 

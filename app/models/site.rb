@@ -1,8 +1,8 @@
 class Site < ApplicationRecord
 	belongs_to :group, optional: true
 	belongs_to :template, optional: true
-	has_many :targets
-	has_many :diffs
+	has_many :targets, dependent: :delete_all
+	has_many :diffs, dependent: :delete_all
 
 	validates :url, presence: true
 

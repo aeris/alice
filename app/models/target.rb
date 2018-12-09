@@ -2,7 +2,6 @@ class Target < ApplicationRecord
 	has_many :templates
 	has_many :groups
 	has_many :sites
-	has_many :checks
 
 	def to_s
 		return self.name if self.name
@@ -21,6 +20,11 @@ class Target < ApplicationRecord
 				to:   self.to,
 				css:  self.css
 		}.compact
+	end
+
+	def self.from_h(hash)
+		hash.symbolize_keys!
+		self.new name: hash[:name], from: hash[:from], to: hash[:from], css: hash[:css]
 	end
 
 	def extract_boundary(content)

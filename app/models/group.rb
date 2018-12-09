@@ -1,7 +1,7 @@
 class Group < ApplicationRecord
 	belongs_to :template, optional: true
-	has_many :sites
-	has_many :targets
+	has_many :sites, dependent: :delete_all
+	has_many :targets, dependent: :delete_all
 
 	validates :name, uniqueness: true
 

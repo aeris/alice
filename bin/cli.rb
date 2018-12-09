@@ -63,26 +63,36 @@ class App < Thor
 	desc 'redo <url>*', 'Redo diff from cache'
 
 	def redo(urls = nil)
-		cache = 'tmp/cache/http'
+		results = Hash.new 0
+
 		self.process urls do |site|
-			site._changes.delete_all
+			puts site.url.colorize :yellow
+
+			site.diffs.delete_all
 			reference = nil
-			fp        = Http.prefix site.url
-			Dir["#{cache}/#{fp}_*"].sort.each do |file|
+			Http.caches(site.url).sort.each do |file|
 				name    = File.basename file
 				date    = name.split('_', 2).last
 				date    = DateTime.strptime date, Http::DATE_FORMAT
-				content = File.read file
+				content = Html.to_s Http.cache file
 
-				unless reference
-					site.update! reference: content
-				else
-					status = site.diff! reference, content, date: date
-					ap site: site.url, date: date, status: status
-				end
+				status          = unless reference
+									  site.update! reference: content
+									  :reference
+								  else
+									  site.diff! reference, content, date: date
+								  end
+				results[status] += 1
+				color = COLORS[status]
+				puts "  #{date}: #{status.to_s.colorize color}"
 				reference = content
 			end
 			nil
+		end
+
+		results.each do |k, v|
+			color = COLORS[k]
+			puts "#{k.to_s.colorize color}: #{v}"
 		end
 	end
 
