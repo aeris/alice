@@ -1,0 +1,54 @@
+//= require_self
+//= require_tree .
+
+@import "knacss"
+
+$navbar-height: 3.25rem
+
+body
+	padding-top: $navbar-height
+
+header
+	position: fixed
+	top: 0
+	width: 100%
+
+	//height: $navbar-height
+	background-color: $color-inverse
+	color: $background-base
+
+	h1
+		font-size: 1em
+		font-weight: bold
+		padding: 14px 16px
+		margin: 0
+		float: left
+		border-right: 1px solid $background-base
+
+	nav
+		ul
+			padding: 0
+			margin: 0
+
+			li
+				float: left
+				padding: 14px 16px
+				list-style-type: none
+				border-right: 1px solid $background-base
+
+				&:last-child
+					border-right: none
+
+				&:hover
+					background-color: $color-warning
+				&.active
+					background-color: $color-success
+
+
+				a
+					color: $background-base
+					text-decoration: none
+
+					&:hover
+						color: $background-base
+						text-decoration: none

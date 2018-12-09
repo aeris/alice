@@ -1,0 +1,23 @@
+<div class="tree">
+	<ul>
+		<% Group.limit(0).order(:name).each do |group| %>
+			<li>
+				<%= group.name %>
+				<ul>
+					<% group.sites.order(:name).each do |site| %>
+						<li>
+							<%= site.name || site.url %>
+							<ul>
+								<% site.checks.each do |check| %>
+									<li>
+										<%= check %>
+									</li>
+								<% end %>
+							</ul>
+						</li>
+					<% end %>
+				</ul>
+			</li>
+		<% end %>
+	</ul>
+</div>
