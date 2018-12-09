@@ -70,18 +70,14 @@ class App < Thor
 
 			site.diffs.delete_all
 			reference = nil
-			Http.caches(site.url).sort.each do |file|
-				name    = File.basename file
-				date    = name.split('_', 2).last
-				date    = DateTime.strptime date, Http::DATE_FORMAT
-				content = Html.to_s Http.cache file
-
+			site.caches.each do |date, content|
 				status          = unless reference
 									  site.update! reference: content
 									  :reference
 								  else
 									  site.diff! reference, content, date: date
 								  end
+				# FileUtils.rm_f file if status == :unchanged
 				results[status] += 1
 				color = COLORS[status]
 				puts "  #{date}: #{status.to_s.colorize color}"
@@ -96,20 +92,6 @@ class App < Thor
 		end
 	end
 
-	# desc 'redo <url> <date1> <date2>', 'Redo check from cache'
-	#
-	# def redo(url, date1 = nil, date2 = nil)
-	# 	site      = Site.where(url: url).first
-	# 	fp        = Digest::SHA256.hexdigest url
-	# 	dir       = File.join Rails.root, 'tmp/cache/http'
-	# 	reference = File.join dir, "#{fp}_#{date1}"
-	# 	reference = File.read reference
-	# 	content   = File.join dir, "#{fp}_#{date2}"
-	# 	content   = File.read content
-	#
-	# 	ap site.changed? reference, content, debug: true
-	# end
-
 	protected
 
 	def sites(url)
@@ -119,7 +101,7 @@ class App < Thor
 
 	def process(urls)
 		sites = self.sites urls
-		Parallel.each sites, in_threads: 1 do |site|
+		Parallel.each sites, in_threads: 16 do |site|
 			ActiveRecord::Base.transaction do
 				url = site.url.colorize :yellow
 				begin

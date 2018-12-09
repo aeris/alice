@@ -44,50 +44,9 @@ class Http
 		@html ||= Html.new @response.body
 	end
 
-	DATE_FORMAT = '%Y%m%d_%H%M%S'.freeze
-
-	def self.prefix(url)
-		Digest::SHA256.hexdigest url
-	end
-
-	HTTP_CACHE_DIR = File.join Rails.root, 'tmp', 'cache', 'http'
-	FileUtils.mkdir_p HTTP_CACHE_DIR unless Dir.exist? HTTP_CACHE_DIR
-
-	def cache(response)
-		return unless ENV['DEBUG_HTTP']
-
-		prefix = self.class.prefix @url
-
-		body = response.body
-		last = Dir[File.join dir, "#{prefix}_*.xz"].sort.last
-		if last
-			last = self.class.cache last
-			old = Digest::SHA256.hexdigest last
-			new = Digest::SHA256.hexdigest body
-			return if old == new
-		end
-
-		time = Time.now.strftime DATE_FORMAT
-		file = prefix + '_' + time + '.xz'
-		file = File.join HTTP_CACHE_DIR, file
-		body = XZ.compress body, level: 9
-		File.binwrite file, body
-	end
-
-	def self.cache(file)
-		body = File.binread file
-		XZ.decompress body
-	end
-
-	def self.caches(url)
-		prefix        = self.prefix url
-		Dir["#{HTTP_CACHE_DIR}/#{prefix}_*.xz"]
-	end
-
 	def grab
 		response = HTTParty.get @url, timeout: 10.seconds
 		raise "Receive #{response.code}" unless response.success?
-		self.cache response
 		response
 	end
 
