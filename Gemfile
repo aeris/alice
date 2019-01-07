@@ -1,3 +1,4 @@
+ruby '2.5.3'
 source 'https://rubygems.org'
 
 gem 'rails'
@@ -6,7 +7,6 @@ gem 'dotenv-rails'
 gem 'bootsnap', require: false
 gem 'sentry-raven'
 
-gem 'sqlite3'
 gem 'pg'
 
 gem 'nokogiri'
@@ -16,7 +16,7 @@ gem 'thor'
 gem 'colorize'
 gem 'pry-rails'
 gem 'parallel'
-gem 'diffy'
+gem 'diffy', '3.2.1'
 gem 'ruby-xz'
 
 gem 'therubyracer', platforms: :ruby
@@ -24,7 +24,6 @@ gem 'sass-rails'
 gem 'uglifier'
 gem 'coffee-rails'
 
-gem 'bulma-rails'
 gem 'jquery-rails'
 
 group :development, :test do
