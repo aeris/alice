@@ -1,4 +1,4 @@
-ruby '2.5.3'
+ruby '2.6.0'
 source 'https://rubygems.org'
 
 gem 'rails'
@@ -16,7 +16,7 @@ gem 'thor'
 gem 'colorize'
 gem 'pry-rails'
 gem 'parallel'
-gem 'diffy', '3.2.1'
+gem 'diffy'
 gem 'ruby-xz'
 
 gem 'therubyracer', platforms: :ruby
