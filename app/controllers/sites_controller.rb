@@ -1,6 +1,6 @@
 class SitesController < ApplicationController
 	def index
-		@sites = Site.all.distinct.order(:group_id, :url)
+		@sites = Site.all.includes(:group).order(:group_id, :url)
 	end
 
 	def show
