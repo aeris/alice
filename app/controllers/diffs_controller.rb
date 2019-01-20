@@ -4,13 +4,15 @@ class DiffsController < ApplicationController
 		return redirect_to action: :show, id: last.created_at.to_date if last
 	end
 
+	DATE_DELTA = 3
+
 	def show
-		@dates = Diff.select(:created_at).distinct
-		@all_dates = []
-		@dates.each do |d|
-			@all_dates.push(d.created_at.to_date)
-		end
 		@date = Date.parse params[:id]
+		dates = Diff.dates
+		current = dates.index @date
+		min = [0, current - DATE_DELTA].max
+		max = current + DATE_DELTA
+		@dates = dates[min..max]
 		@diffs = Diff.where created_at: @date..@date+1
 	end
 end

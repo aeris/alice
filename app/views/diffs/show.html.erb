@@ -1,15 +1,8 @@
 <div class="autogrid txtcenter">
-	<% (-3..3).each do |n|
-		date = @date + n %>
-		<% if @all_dates.include?(date) %>
-			<%= content_tag :div, class: (:current if @date == date) do %>
-				<%= link_to l(date), diff_path(date) %>
-			<% end %>
-		<% else %>
-			<%= content_tag :div, class: (:nodata) do %>
-				<%= link_to l(date), diff_path(date) %>
-			<%end %>
-		<% end %>
+	<% @dates.each do |date| %>
+		<%= content_tag :div, class: (:current if @date == date) do
+			link_to l(date), diff_path(date)
+		end %>
 	<% end %>
 </div>
 
