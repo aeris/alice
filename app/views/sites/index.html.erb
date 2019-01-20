@@ -15,7 +15,7 @@
 		when changed_at > 7.days.ago.to_date
 			:yellow
 		end
-		classes = (%i[mls].concat([colorclass])).compact %>
+		classes = (%i[mls bullet].concat([colorclass])).compact %>
 	<%= content_tag(:div, class: classes) do
 			concat link_to (site.name || site.url), site
 			concat " (last changed: #{l changed_at})" if changed_at
