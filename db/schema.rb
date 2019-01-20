@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_27_204747) do
+ActiveRecord::Schema.define(version: 2019_01_20_155929) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 2018_11_27_204747) do
     t.json "content", null: false
     t.bigint "site_id", null: false
     t.datetime "created_at", null: false
+    t.index "date_trunc('day'::text, created_at) DESC", name: "diffs_creation_day_index"
     t.index ["site_id"], name: "index_diffs_on_site_id"
   end
 
