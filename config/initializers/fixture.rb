@@ -6,6 +6,7 @@ module Diffy
 
 		def load(diff)
 			@diff = diff
+			@paths = ['', '']
 			self
 		end
 
