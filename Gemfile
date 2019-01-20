@@ -1,7 +1,8 @@
 ruby '2.6.0'
 source 'https://rubygems.org'
 
-gem 'rails'
+gem 'rails', '~> 5.2.2'
+gem 'bundler', '< 2'
 gem 'puma'
 gem 'dotenv-rails'
 gem 'bootsnap', require: false

@@ -274,6 +274,7 @@ DEPENDENCIES
   better_errors
   binding_of_caller
   bootsnap
+  bundler (< 2)
   coffee-rails
   colorize
   diffy
@@ -291,7 +292,7 @@ DEPENDENCIES
   pry-rails
   puma
   rack-livereload
-  rails
+  rails (~> 5.2.2)
   rspec-rails
   ruby-xz
   sass-rails
@@ -310,4 +311,4 @@ RUBY VERSION
    ruby 2.6.0p0
 
 BUNDLED WITH
-   2.0.1
+   1.17.3
