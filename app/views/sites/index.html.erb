@@ -1,0 +1,23 @@
+<% last = nil
+@sites.each do |site|
+	if last != site.group_id
+		last = site.group_id %>
+	<h3><%= site.group&.name || :nogroup %></h3>
+	<% end %>
+	<% changed_at = site.changed_at&.to_date
+		colorclass = case
+		when changed_at.nil?
+			nil
+		when changed_at > 1.day.ago.to_date
+			:red
+		when changed_at > 2.days.ago.to_date
+			:orange
+		when changed_at > 7.days.ago.to_date
+			:yellow
+		end
+		classes = (%i[mls].concat([colorclass])).compact %>
+	<%= content_tag(:div, class: classes) do
+			concat link_to (site.name || site.url), site
+			concat " (last changed: #{l changed_at})" if changed_at
+		end %>
+<% end %>

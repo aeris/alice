@@ -1,0 +1,37 @@
+<h3><%= link_to (@site.name || @site.url), @site.url %></h3>
+
+<div class="alert">
+	<strong>group:</strong> <%= @site.group&.name || :none %><br>
+	<strong>template:</strong> <%= @site.template&.name || :none %><br>
+	<strong>last_error:</strong> <%= @site&.last_error %><br>
+	<strong>checked_at:</strong> <%= l @site.checked_at, format: :long if @site.checked_at %><br>
+	<strong>changed_at:</strong> <%= l @site.changed_at, format: :long if @site.changed_at %><br>
+</div>
+
+<%= link_to (:back), sites_path %>
+
+<% @site.diffs.each do |diff| %>
+	<ul class="unstyled mts">
+		<li><%= l diff.created_at, format: :long %>
+			<ul class="unstyled mll mbs">
+			<% diff.content.each do |chunk| %>
+				<li>
+					<%=
+						target = chunk['target']
+						if target
+							target = Target.from_h target
+							content_tag :h4, target
+						end
+					%>
+					<%=
+						chunk = chunk['diff']
+						raw Diffy::Diff.load(chunk).to_s :html
+					%>
+				</li>
+			<% end %>
+		</ul>
+	</li>
+</ul>
+<% end %>
+
+<%= link_to (:back), sites_path %>
