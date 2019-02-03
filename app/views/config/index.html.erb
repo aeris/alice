@@ -1,14 +1,20 @@
 <div class="tabs js-tabs">
 	<nav class="tabs-menu">
-		<a href="#tab1" class="tabs-menu-link is-active"><%= :groups %></a>
-		<a href="#tab2" class="tabs-menu-link"><%= :templates %></a>
-		<a href="#tab3" class="tabs-menu-link"><%= :sites %></a>
+		<a href="#tab1" class="tabs-menu-link is-active"><%= t(:groups) %></a>
+		<a href="#tab2" class="tabs-menu-link"><%= t(:templates) %></a>
+		<a href="#tab3" class="tabs-menu-link"><%= t(:sites_without_group) %></a>
 	</nav>
 	<div class="tabs-content">
 		<div id="tab1" class="tabs-content-item">
+			<div class="mbs">
+				<%= link_to t(:new_group), new_group_path %>
+			</div>
+
 			<ul class="">
 			<% @groups.each do |group| %>
-				<li><%= group.name||group.id %></li>
+				<li><%= link_to (group.name||group.id), edit_group_path(group) %>&nbsp;&nbsp;&nbsp;&nbsp;
+					<%= link_to :remove, group, method: :delete, data: { confirm: "Are you sure you want to remove this group ("+(group.name||group.id)+") and all related data? This cannot be revert!" } %>
+				</li>
 				<% if group.targets %>
 					<ul class="">
 						<li>targets:</li>
@@ -47,6 +53,10 @@
 				<% end %>
 			<% end %>
 			</ul>
+
+			<div class="mts">
+				<%= link_to t(:new_group), new_group_path %>
+			</div>
 		</div>
 		<div id="tab2" class="tabs-content-item">
 			<ul class="">

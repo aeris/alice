@@ -21,7 +21,6 @@ header
 	top: 0
 	width: 100%
 
-	//height: $navbar-height
 	background-color: $header-bg-color
 	color: $background-base
 
@@ -50,7 +49,6 @@ header
 				&:hover
 					background-color: darken($header-bg-color-contrast, 25%)
 				&.active
-					// background-color: $color-success
 					background-color: $header-bg-color-contrast
 
 
@@ -87,7 +85,6 @@ main
 
 	div.nodata
 		font-style: oblique
-
 		a
 			color: $link-color
 
@@ -109,3 +106,15 @@ nav.tabs-menu
 		font-weight: bold
 		border-bottom-color: $border-color-base
 		text-decoration: none
+
+form
+	fieldset.block
+		border: .1rem solid darken($border-color-base, 40%)
+		box-shadow: 0rem 0rem .4rem $border-color-base
+		border-radius: .8rem
+		legend
+			background-color: lighten($header-bg-color-contrast, 30%)
+			color: $link-color-base
+			font-weight: bold
+			border: 1px solid $border-color-base
+			border-left-width: thick

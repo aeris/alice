@@ -1,0 +1,52 @@
+<%= form_with(model: group, local: true, remote: true, class: "mts") do |form| %>
+	<% if group.errors.any? %>
+		<div id="alert--error">
+			<h2><%= pluralize(group.errors.count, "error") %> prohibited this group from being saved:</h2>
+
+			<ul>
+			<% group.errors.full_messages.each do |message| %>
+				<li><%= message %></li>
+			<% end %>
+			</ul>
+		</div>
+	<% end %>
+
+	<fieldset class="mbs pas block">
+		<legend class="h4-like"><%= :group %></legend>
+		<div class="auto-grid has-gutter mbs">
+			<%= form.label :name, :name, class: 'txtright' %>
+			<%= form.text_field :name %>
+
+			<%= form.label :template_id, :template_id, class: 'txtright' %>
+			<%= form.select :template_id,
+					::Template.all.collect {|t| [t.name, t.id]},
+					{prompt: :select},
+					{multiple: :true, size: 5} %>
+		</div>
+	</fieldset>
+
+	<fieldset class="mbs pas block">
+		<legend class="h4-like"><%= :targets %></legend>
+		<%= form.fields_for :targets do |builder| %>
+			<%= render 'target_fields', f: builder %>
+		<% end %>
+
+		<%= link_to_add_fields :add_target, form, :targets %>
+	</fieldset>
+
+	<fieldset class="mbs pas block">
+		<legend class="h4-like"><%= :sites %></legend>
+		<%= link_to_add_fields_below :add_site, form, :sites %>
+
+		<%= form.fields_for :sites do |builder| %>
+			<%= render 'site_fields', f: builder %>
+		<% end %>
+
+		<%= link_to_add_fields :add_site, form, :sites %>
+	</fieldset>
+
+	<div class="actions">
+		<%= form.submit :submit %>
+	</div>
+
+<% end %>

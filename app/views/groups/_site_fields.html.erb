@@ -1,0 +1,13 @@
+<fieldset class="pan mbs">
+	<div class="auto-grid has-gutter">
+		<%= f.label :name, :name %>:
+		<%= f.text_field :name %>
+
+		<%= f.label :url, :url %>:
+		<%= f.url_field :url, size: 50 %>
+
+		<%= f.hidden_field :_destroy %>
+		<%= link_to :delete, "#", class: "remove_fields" %>
+
+	</div>
+</fieldset>
