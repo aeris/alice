@@ -75,11 +75,11 @@
 			<ul class="">
 				<% @sites.each do |site| %>
 					<li><%= link_to (site.name||site.url), site %></li>
-					<% unless site.all_targets.empty? %>
+					<% unless site.targets.empty? %>
 						<ul class="">
 							<li>targets:</li>
 							<ul class="">
-							<% site.all_targets.each do |target| %>
+							<% site.targets.each do |target| %>
 								<li><%= :name %>: <%= target.name||target.id %></li>
 								<% if target.css %>
 									<li><%= :css %>: <%= content_tag :code do target.css end %></li>
