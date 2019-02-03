@@ -15,7 +15,6 @@ class GroupsController < ApplicationController
 	end
 
 	def edit
-		@group = Group.find(params[:id])
 	end
 
 	def update
@@ -40,8 +39,8 @@ class GroupsController < ApplicationController
 		def group_params
 			params.require(:group).permit(
 				:id, :name, :template_id,
-				targets_attributes: [:id, :name, :css, :from, :to, :_destroy],
-				sites_attributes: [:id, :name, :url, :_destroy]
+				targets_attributes: %i[id name css from to group_id _destroy],
+				sites_attributes: %i[id name url reference group_id _destroy]
 			)
 		end
 
