@@ -90,3 +90,22 @@ main
 
 		a
 			color: $link-color
+
+	ul.nostyle,
+	li.nostyle
+		list-style: '-'
+		margin-left: 1rem
+		padding: 0
+
+	ul.hidden
+		display: none
+
+nav.tabs-menu
+	color: $link-color
+	border-bottom-color: $border-color-base
+	.tabs-menu-link
+		color: $border-color-base
+	.tabs-menu-link.is-active
+		font-weight: bold
+		border-bottom-color: $border-color-base
+		text-decoration: none

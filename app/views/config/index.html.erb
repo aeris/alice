@@ -1,0 +1,103 @@
+<div class="tabs js-tabs">
+	<nav class="tabs-menu">
+		<a href="#tab1" class="tabs-menu-link is-active"><%= :groups %></a>
+		<a href="#tab2" class="tabs-menu-link"><%= :templates %></a>
+		<a href="#tab3" class="tabs-menu-link"><%= :sites %></a>
+	</nav>
+	<div class="tabs-content">
+		<div id="tab1" class="tabs-content-item">
+			<ul class="">
+			<% @groups.each do |group| %>
+				<li><%= group.name||group.id %></li>
+				<% if group.targets %>
+					<ul class="">
+						<li>targets:</li>
+						<ul class="">
+							<% group.targets.each do |target| %>
+								<li><%= :name %>: <%= target.name||target.id %></li>
+								<% if target.css %>
+									<li><%= :css %>: <%= content_tag :code do target.css end %></li>
+								<% else %>
+									<li><%= :from %>: <%= content_tag :code do target.from end %></li>
+									<li><%= :to %>: <%= content_tag :code do target.to end %></li>
+								<% end %>
+							<% end %>
+						</ul>
+					</ul>
+				<% end %>
+				<% if group.template %>
+					<ul class="">
+						<li>template:</li>
+						<ul>
+							<% group.template.each do |template| %>
+								<li><%= :template %>: <%= template.name||template.id %></li>
+							<% end %>
+						</ul>
+					</ul>
+				<% end %>
+				<% unless group.sites.empty? %>
+					<ul class="sites">
+						<li>list of <%= group.sites.count %> sites: <button>+</button></li>
+						<ul class="hidden">
+							<% group.sites.order(:name, :url).each do |site| %>
+								<li><%= link_to (site.name || site.url), site %></li>
+							<% end %>
+						</ul>
+					</ul>
+				<% end %>
+			<% end %>
+			</ul>
+		</div>
+		<div id="tab2" class="tabs-content-item">
+			<ul class="">
+				<% @templates.each do |template| %>
+					<li><%= template.name||template.id %></li>
+					<% unless template.targets.empty? %>
+						<ul class="">
+							<li>targets:</li>
+							<ul class="">
+								<% template.targets.each do |target| %>
+									<li><%= :name %>: <%= target.name||target.id %></li>
+									<% if target.css %>
+										<li><%= :css %>: <%= content_tag :code do target.css end %></li>
+									<% else %>
+										<li><%= :from %>: <%= content_tag :code do target.from end %></li>
+										<li><%= :to %>: <%= content_tag :code do target.to end %></li>
+									<% end %>
+								<% end %>
+							</ul>
+						</ul>
+					<% end %>
+				<% end %>
+			</ul>
+		</div>
+		<div id="tab3" class="tabs-content-item">
+			<ul class="">
+				<% @sites.each do |site| %>
+					<li><%= link_to (site.name||site.url), site %></li>
+					<% unless site.all_targets.empty? %>
+						<ul class="">
+							<li>targets:</li>
+							<ul class="">
+							<% site.all_targets.each do |target| %>
+								<li><%= :name %>: <%= target.name||target.id %></li>
+								<% if target.css %>
+									<li><%= :css %>: <%= content_tag :code do target.css end %></li>
+								<% else %>
+									<li><%= :from %>: <%= content_tag :code do target.from end %></li>
+									<li><%= :to %>: <%= content_tag :code do target.to end %></li>
+								<% end %>
+							<% end %>
+							</ul>
+						</ul>
+					<% end %>
+					<% if site.template %>
+					<ul>
+						<li>template: <%= site.template.name||site.template.id %></li>
+					</ul>
+					<% end %>
+				<% end %>
+			</ul>
+		</div>
+	</div>
+</div>
