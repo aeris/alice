@@ -1,5 +1,6 @@
 class GroupsController < ApplicationController
 	before_action :set_group, only: %i[edit update destroy]
+	before_action :must_be_authenticated, only: %i[new create edit update destroy]
 
 	def new
 		@group = Group.new

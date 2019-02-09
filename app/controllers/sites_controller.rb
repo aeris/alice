@@ -1,5 +1,6 @@
 class SitesController < ApplicationController
 	before_action :set_site, only: %i[show edit update destroy]
+	before_action :must_be_authenticated, only: %i[new create edit update destroy]
 
 	def index
 		@sites = Site.all.includes(:group).order(:group_id, :url)

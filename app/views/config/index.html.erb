@@ -12,8 +12,11 @@
 
 			<ul class="unstyled">
 			<% @groups.each do |group| %>
-				<li><%= link_to (group.name||group.id), edit_group_path(group) %> |
-					<%= link_to :remove, group, method: :delete, data: { confirm: "Are you sure you want to remove this group ("+(group.name||group.id)+") and all related data? This cannot be revert!" } %>
+				<li><%= link_to (group.name||group.id), edit_group_path(group) %>
+					<% if session[:authenticated] %>
+						 |
+						<%= link_to :remove, group, method: :delete, data: { confirm: "Are you sure you want to remove this group ("+(group.name||group.id)+") and all related data? This cannot be revert!" } %>
+					<% end %>
 				</li>
 				<% if group.targets %>
 					<ul>
@@ -64,8 +67,11 @@
 			<ul class="unstyled">
 				<% @templates.each do |template| %>
 					<li>
-						<%= link_to (template.name||template.id), edit_template_path(template) %> |
-						<%= link_to :remove, template, method: :delete, data: { confirm: "Are you sure you want to remove this template ("+(template.name||template.id)+") and all related data? This cannot be revert!" } %>
+						<%= link_to (template.name||template.id), edit_template_path(template) %>
+						<% if session[:authenticated] %>
+							 |
+							<%= link_to :remove, template, method: :delete, data: { confirm: "Are you sure you want to remove this template ("+(template.name||template.id)+") and all related data? This cannot be revert!" } %>
+						<% end %>
 					</li>
 					<% unless template.targets.empty? %>
 						<ul>
@@ -99,8 +105,11 @@
 				<% @sites.each do |site| %>
 					<li>
 						<%= link_to (site.name||site.url), edit_site_path(site) %> |
-						<%= link_to :show, site %> |
-						<%= link_to :remove, site, method: :delete, data: { confirm: "Are you sure you want to remove this site ("+(site.name||site.id)+") and all related data? This cannot be revert!" } %>
+						<%= link_to :show, site %>
+						<% if session[:authenticated] %>
+							 |
+							<%= link_to :remove, site, method: :delete, data: { confirm: "Are you sure you want to remove this site ("+(site.name||site.id)+") and all related data? This cannot be revert!" } %>
+						<% end %>
 					</li>
 					<% unless site.targets.empty? %>
 						<ul>

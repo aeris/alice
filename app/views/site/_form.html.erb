@@ -1,0 +1,18 @@
+<%= form_with(local: true, class: "mts") do |form| %>
+
+	<fieldset class="mbs pas block">
+		<legend class="h4-like"><%= :login %></legend>
+		<div class="auto-grid has-gutter mbs">
+			<%= form.label :username, :username, class: 'txtright' %>:
+			<%= form.text_field :username %>
+
+			<%= form.label :password, :password, class: 'txtright' %>:
+			<%= form.password_field :password %>
+		</div>
+	</fieldset>
+
+	<div class="actions">
+		<%= form.submit :submit %>
+	</div>
+
+<% end %>

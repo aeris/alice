@@ -1,5 +1,6 @@
 class TemplatesController < ApplicationController
 	before_action :set_template, only: %i[edit update destroy]
+	before_action :must_be_authenticated, only: %i[new create edit update destroy]
 
 	def new
 		@template = ::Template.new
