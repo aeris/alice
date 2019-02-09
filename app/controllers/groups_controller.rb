@@ -40,7 +40,7 @@ class GroupsController < ApplicationController
 			params.require(:group).permit(
 				:id, :name, :template_id,
 				targets_attributes: %i[id name css from to group_id _destroy],
-				sites_attributes: %i[id name url reference group_id _destroy]
+				sites_attributes: %i[id name url group_id _destroy]
 			)
 		end
 

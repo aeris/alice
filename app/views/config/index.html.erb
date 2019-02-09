@@ -10,22 +10,22 @@
 				<%= link_to t(:new_group), new_group_path %>
 			</div>
 
-			<ul class="">
+			<ul class="unstyled">
 			<% @groups.each do |group| %>
-				<li><%= link_to (group.name||group.id), edit_group_path(group) %>&nbsp;&nbsp;&nbsp;&nbsp;
+				<li><%= link_to (group.name||group.id), edit_group_path(group) %> |
 					<%= link_to :remove, group, method: :delete, data: { confirm: "Are you sure you want to remove this group ("+(group.name||group.id)+") and all related data? This cannot be revert!" } %>
 				</li>
 				<% if group.targets %>
 					<ul class="">
-						<li>targets:</li>
+						<li><%= :targets %>:</li>
 						<ul class="">
 							<% group.targets.each do |target| %>
 								<li><%= :name %>: <%= target.name||target.id %></li>
-								<% if target.css %>
-									<li><%= :css %>: <%= content_tag :code do target.css end %></li>
+								<% unless target.css.blank? %>
+									<li class="separator"><%= :css %>: <%= content_tag :code do target.css end %></li>
 								<% else %>
 									<li><%= :from %>: <%= content_tag :code do target.from end %></li>
-									<li><%= :to %>: <%= content_tag :code do target.to end %></li>
+									<li class="separator"><%= :to %>: <%= content_tag :code do target.to end %></li>
 								<% end %>
 							<% end %>
 						</ul>
@@ -33,7 +33,7 @@
 				<% end %>
 				<% if group.template %>
 					<ul class="">
-						<li>template:</li>
+						<li><%= :template %>:</li>
 						<ul>
 							<% group.template.each do |template| %>
 								<li><%= :template %>: <%= template.name||template.id %></li>
@@ -43,7 +43,7 @@
 				<% end %>
 				<% unless group.sites.empty? %>
 					<ul class="sites">
-						<li>list of <%= group.sites.count %> sites: <button>+</button></li>
+						<li><%= t(:list_of) %> <%= group.sites.count %> sites: <button>+</button></li>
 						<ul class="hidden">
 							<% group.sites.order(:name, :url).each do |site| %>
 								<li><%= link_to (site.name || site.url), site %></li>
@@ -59,20 +59,27 @@
 			</div>
 		</div>
 		<div id="tab2" class="tabs-content-item">
-			<ul class="">
+			<div class="mbs">
+				<%= link_to t(:nem_template), new_template_path %>
+			</div>
+
+			<ul class="unstyled">
 				<% @templates.each do |template| %>
-					<li><%= template.name||template.id %></li>
+					<li>
+						<%= link_to (template.name||template.id), edit_template_path(template) %> |
+						<%= link_to :remove, template, method: :delete, data: { confirm: "Are you sure you want to remove this template ("+(template.name||template.id)+") and all related data? This cannot be revert!" } %>
+					</li>
 					<% unless template.targets.empty? %>
 						<ul class="">
-							<li>targets:</li>
+							<li><%= :targets %>:</li>
 							<ul class="">
 								<% template.targets.each do |target| %>
 									<li><%= :name %>: <%= target.name||target.id %></li>
-									<% if target.css %>
-										<li><%= :css %>: <%= content_tag :code do target.css end %></li>
+									<% unless target.css.blank? %>
+										<li class="separator"><%= :css %>: <%= content_tag :code do target.css end %></li>
 									<% else %>
 										<li><%= :from %>: <%= content_tag :code do target.from end %></li>
-										<li><%= :to %>: <%= content_tag :code do target.to end %></li>
+										<li class="separator"><%= :to %>: <%= content_tag :code do target.to end %></li>
 									<% end %>
 								<% end %>
 							</ul>
@@ -80,18 +87,24 @@
 					<% end %>
 				<% end %>
 			</ul>
+
+			<div class="mts">
+				<%= link_to t(:nem_template), new_template_path %>
+			</div>
 		</div>
 		<div id="tab3" class="tabs-content-item">
 			<ul class="">
 				<% @sites.each do |site| %>
-					<li><%= link_to (site.name||site.url), site %></li>
+					<li>
+						<%= link_to (site.name||site.url), site %>
+					</li>
 					<% unless site.targets.empty? %>
 						<ul class="">
-							<li>targets:</li>
+							<li><%= :targets %>:</li>
 							<ul class="">
 							<% site.targets.each do |target| %>
 								<li><%= :name %>: <%= target.name||target.id %></li>
-								<% if target.css %>
+								<% unless target.css.blank? %>
 									<li><%= :css %>: <%= content_tag :code do target.css end %></li>
 								<% else %>
 									<li><%= :from %>: <%= content_tag :code do target.from end %></li>
@@ -103,7 +116,7 @@
 					<% end %>
 					<% if site.template %>
 					<ul>
-						<li>template: <%= site.template.name||site.template.id %></li>
+						<li><%= :template %>: <%= site.template.name||site.template.id %></li>
 					</ul>
 					<% end %>
 				<% end %>

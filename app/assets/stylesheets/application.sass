@@ -98,6 +98,7 @@ main
 		display: none
 
 nav.tabs-menu
+	margin: 0 1.2rem
 	color: $link-color
 	border-bottom-color: $border-color-base
 	.tabs-menu-link
@@ -106,6 +107,12 @@ nav.tabs-menu
 		font-weight: bold
 		border-bottom-color: $border-color-base
 		text-decoration: none
+
+.tabs-content
+	padding: 0 1rem 1rem 1rem
+	border: 1px solid $border-color-base
+	border-radius: 1rem
+	box-shadow: 0rem 0rem .4rem $border-color-base
 
 form
 	fieldset.block
@@ -118,3 +125,9 @@ form
 			font-weight: bold
 			border: 1px solid $border-color-base
 			border-left-width: thick
+
+ul
+	li.separator
+		border-bottom: 1px solid #c3c3c3
+	li.separator:last-child
+		border-bottom: none

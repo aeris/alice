@@ -1,0 +1,35 @@
+<%= form_with(model: template, local: true, remote: true, class: "mts") do |form| %>
+	<% if template.errors.any? %>
+		<div id="alert--error">
+			<h2><%= pluralize(template.errors.count, "error") %> prohibited this template from being saved:</h2>
+
+			<ul>
+			<% template.errors.full_messages.each do |message| %>
+				<li><%= message %></li>
+			<% end %>
+			</ul>
+		</div>
+	<% end %>
+
+	<fieldset class="mbs pas block">
+		<legend class="h4-like"><%= :template %></legend>
+		<div class="auto-grid has-gutter mbs">
+			<%= form.label :name, :name, class: 'txtright' %>
+			<%= form.text_field :name %>
+		</div>
+	</fieldset>
+
+	<fieldset class="mbs pas block">
+		<legend class="h4-like"><%= :targets %></legend>
+		<%= form.fields_for :targets do |builder| %>
+			<%= render 'target_fields', f: builder %>
+		<% end %>
+
+		<%= link_to_add_fields :add_target, form, :targets %>
+	</fieldset>
+
+	<div class="actions">
+		<%= form.submit :submit %>
+	</div>
+
+<% end %>

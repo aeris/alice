@@ -3,4 +3,5 @@ Rails.application.routes.draw do
 	resources :sites, only: %i[index show]
 	resources :config, only: %i[index]
 	resources :groups, only: %i[new create edit update destroy]
+	resources :templates, only: %i[new create edit update destroy]
 end
