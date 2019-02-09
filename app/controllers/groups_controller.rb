@@ -1,5 +1,5 @@
 class GroupsController < ApplicationController
-	before_action :set_group, only: [:edit, :update, :destroy]
+	before_action :set_group, only: %i[edit update destroy]
 
 	def new
 		@group = Group.new
@@ -33,7 +33,7 @@ class GroupsController < ApplicationController
 
 	private
 		def set_group
-			@group = Group.find(params[:id])
+			@group = Group.find params[:id]
 		end
 
 		def group_params

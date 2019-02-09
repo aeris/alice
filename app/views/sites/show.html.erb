@@ -1,4 +1,4 @@
-<h3><%= link_to (@site.name || @site.url), @site.url %></h3>
+<h3><%= link_to (@site.name||@site.url), @site.url %></h3>
 
 <div class="alert">
 	<strong>group:</strong> <%= @site.group&.name || :none %><br>
@@ -8,7 +8,9 @@
 	<strong>changed_at:</strong> <%= l @site.changed_at, format: :long if @site.changed_at %><br>
 </div>
 
-<%= link_to (:back), sites_path %>
+<div class="mbs">
+	<%= link_to (:back), sites_path %>
+</div>
 
 <% @site.diffs.each do |diff| %>
 	<ul class="unstyled mts">
@@ -34,4 +36,6 @@
 </ul>
 <% end %>
 
-<%= link_to (:back), sites_path %>
+<div class="mts">
+	<%= link_to (:back), sites_path %>
+</div>

@@ -35,9 +35,7 @@
 					<ul class="">
 						<li><%= :template %>:</li>
 						<ul>
-							<% group.template.each do |template| %>
-								<li><%= :template %>: <%= template.name||template.id %></li>
-							<% end %>
+							<li><%= :template %>: <%= group.template.name||group.template.id %></li>
 						</ul>
 					</ul>
 				<% end %>
@@ -60,7 +58,7 @@
 		</div>
 		<div id="tab2" class="tabs-content-item">
 			<div class="mbs">
-				<%= link_to t(:nem_template), new_template_path %>
+				<%= link_to t(:new_template), new_template_path %>
 			</div>
 
 			<ul class="unstyled">
@@ -89,14 +87,19 @@
 			</ul>
 
 			<div class="mts">
-				<%= link_to t(:nem_template), new_template_path %>
+				<%= link_to t(:new_template), new_template_path %>
 			</div>
 		</div>
 		<div id="tab3" class="tabs-content-item">
+			<div class="mbs">
+				<%= link_to t(:new_site), new_site_path %>
+			</div>
+
 			<ul class="">
 				<% @sites.each do |site| %>
 					<li>
-						<%= link_to (site.name||site.url), site %>
+						<%= link_to (site.name||site.url), edit_site_path(site) %> |
+						<%= link_to :show, site %>
 					</li>
 					<% unless site.targets.empty? %>
 						<ul class="">
@@ -121,6 +124,10 @@
 					<% end %>
 				<% end %>
 			</ul>
+
+			<div class="mts">
+				<%= link_to t(:new_site), new_site_path %>
+			</div>
 		</div>
 	</div>
 </div>

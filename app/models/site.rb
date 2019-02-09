@@ -6,6 +6,7 @@ class Site < ApplicationRecord
 	attribute :reference, :compressed_text
 
 	validates :url, presence: true
+	accepts_nested_attributes_for :targets, allow_destroy: true, reject_if: lambda{ |a| a[:name].blank? }
 
 	def self.[](url)
 		self.where(url: url).first

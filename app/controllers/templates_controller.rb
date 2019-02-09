@@ -1,5 +1,5 @@
 class TemplatesController < ApplicationController
-	before_action :set_template, only: [:edit, :update, :destroy]
+	before_action :set_template, only: %i[edit update destroy]
 
 	def new
 		@template = ::Template.new
@@ -33,7 +33,7 @@ class TemplatesController < ApplicationController
 
 	private
 		def set_template
-			@template = ::Template.find(params[:id])
+			@template = ::Template.find params[:id]
 		end
 
 		def template_params
