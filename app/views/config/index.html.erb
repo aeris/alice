@@ -1,11 +1,11 @@
 <div class="tabs js-tabs">
 	<nav class="tabs-menu">
-		<a href="#tab1" class="tabs-menu-link is-active"><%= t(:groups) %></a>
-		<a href="#tab2" class="tabs-menu-link"><%= t(:templates) %></a>
-		<a href="#tab3" class="tabs-menu-link"><%= t(:sites_without_group) %></a>
+		<a href="#tab-groups" class="tabs-menu-link is-active"><%= t(:groups) %></a>
+		<a href="#tab-templates" class="tabs-menu-link"><%= t(:templates) %></a>
+		<a href="#tab-sites" class="tabs-menu-link"><%= t(:sites_without_group) %></a>
 	</nav>
 	<div class="tabs-content">
-		<div id="tab1" class="tabs-content-item">
+		<div id="tab-groups" class="tabs-content-item">
 			<div class="mbs">
 				<%= link_to t(:new_group), new_group_path %>
 			</div>
@@ -16,9 +16,9 @@
 					<%= link_to :remove, group, method: :delete, data: { confirm: "Are you sure you want to remove this group ("+(group.name||group.id)+") and all related data? This cannot be revert!" } %>
 				</li>
 				<% if group.targets %>
-					<ul class="">
+					<ul>
 						<li><%= :targets %>:</li>
-						<ul class="">
+						<ul>
 							<% group.targets.each do |target| %>
 								<li><%= :name %>: <%= target.name||target.id %></li>
 								<% unless target.css.blank? %>
@@ -32,7 +32,7 @@
 					</ul>
 				<% end %>
 				<% if group.template %>
-					<ul class="">
+					<ul>
 						<li><%= :template %>:</li>
 						<ul>
 							<li><%= :template %>: <%= group.template.name||group.template.id %></li>
@@ -56,7 +56,7 @@
 				<%= link_to t(:new_group), new_group_path %>
 			</div>
 		</div>
-		<div id="tab2" class="tabs-content-item">
+		<div id="tab-templates" class="tabs-content-item">
 			<div class="mbs">
 				<%= link_to t(:new_template), new_template_path %>
 			</div>
@@ -68,9 +68,9 @@
 						<%= link_to :remove, template, method: :delete, data: { confirm: "Are you sure you want to remove this template ("+(template.name||template.id)+") and all related data? This cannot be revert!" } %>
 					</li>
 					<% unless template.targets.empty? %>
-						<ul class="">
+						<ul>
 							<li><%= :targets %>:</li>
-							<ul class="">
+							<ul>
 								<% template.targets.each do |target| %>
 									<li><%= :name %>: <%= target.name||target.id %></li>
 									<% unless target.css.blank? %>
@@ -90,21 +90,22 @@
 				<%= link_to t(:new_template), new_template_path %>
 			</div>
 		</div>
-		<div id="tab3" class="tabs-content-item">
+		<div id="tab-sites" class="tabs-content-item">
 			<div class="mbs">
 				<%= link_to t(:new_site), new_site_path %>
 			</div>
 
-			<ul class="">
+			<ul class="unstyled">
 				<% @sites.each do |site| %>
 					<li>
 						<%= link_to (site.name||site.url), edit_site_path(site) %> |
-						<%= link_to :show, site %>
+						<%= link_to :show, site %> |
+						<%= link_to :remove, site, method: :delete, data: { confirm: "Are you sure you want to remove this site ("+(site.name||site.id)+") and all related data? This cannot be revert!" } %>
 					</li>
 					<% unless site.targets.empty? %>
-						<ul class="">
+						<ul>
 							<li><%= :targets %>:</li>
-							<ul class="">
+							<ul>
 							<% site.targets.each do |target| %>
 								<li><%= :name %>: <%= target.name||target.id %></li>
 								<% unless target.css.blank? %>
