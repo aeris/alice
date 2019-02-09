@@ -3,7 +3,7 @@ class SiteController < ApplicationController
 	end
 
 	def auth
-		if params[:username] == ENV["username"] && params[:password] == ENV["password"]
+		if params[:username] == ENV['LOGIN_USERNAME'] && params[:password] == ENV['LOGIN_PASSWORD']
 			session[:authenticated] = true
 			redirect_to session[:redirect_to] || diffs_path
 		else
