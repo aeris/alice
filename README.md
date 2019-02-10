@@ -10,7 +10,7 @@ It was initially developped to help [Projet Arcadie](https://projetarcadie.com/)
 
 It's released under [AGPLv3](https://www.gnu.org/licenses/agpl-3.0.en.html) license.
 
-You can see a demo in action [here](https://arcadie-alice-demo.herokuapp.com/diffs/).
+You can see a demo in action [here](https://projet-alice-demo.herokuapp.com/diffs/).
 
 # Setup
 
