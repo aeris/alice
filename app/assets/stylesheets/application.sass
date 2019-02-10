@@ -39,9 +39,10 @@ header
 
 			li
 				float: left
-				padding: 14px 16px
+				padding: 1rem 2rem
 				list-style-type: none
 				border-right: 1px solid $border-color-base
+				display: inline
 
 				&:last-child
 					border-right: none
@@ -50,7 +51,26 @@ header
 					background-color: darken($header-bg-color-contrast, 25%)
 				&.active
 					background-color: $header-bg-color-contrast
+				a
+					text-align: center
+				span
+					display: inline-block
+					width: 25px
+					height: 25px
+					margin-right: .5rem
 
+				#changes
+					background: image-url("icons.png") 0 0
+				#changes:hover
+					background: image-url("icons.png") -25px 0
+				#sites
+					background: image-url("icons.png") 0 -25px
+				#sites:hover
+					background: image-url("icons.png") -25px -25px
+				#config
+					background: image-url("icons.png") 0 -50px
+				#config:hover
+					background: image-url("icons.png") -50px -50px
 
 				a
 					color: $background-base
@@ -59,6 +79,7 @@ header
 					&:hover, &:active, &:visited
 						color: $background-base
 						text-decoration: none
+
 
 main
 	h1
@@ -96,6 +117,19 @@ main
 
 	ul.hidden
 		display: none
+
+	.sites
+		margin: .2rem 0
+	.sites button
+		padding: 0
+		width: 25px
+		height: 25px
+		background: image-url("icons.png") 0 -75px
+		background-color: #e3e3e3
+		border-radius: .1rem
+
+	.sites button:hover
+		background: image-url("icons.png") -75px -75px
 
 nav.tabs-menu
 	margin: 0 1.2rem

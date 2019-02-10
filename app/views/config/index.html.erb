@@ -44,7 +44,7 @@
 				<% end %>
 				<% unless group.sites.empty? %>
 					<ul class="sites">
-						<li><%= t(:list_of) %> <%= group.sites.count %> sites: <button>+</button></li>
+						<li><%= t(:list_of) %> <%= group.sites.count %> sites: <button></button></li>
 						<ul class="hidden">
 							<% group.sites.order(:name, :url).each do |site| %>
 								<li><%= link_to (site.name || site.url), site %></li>
