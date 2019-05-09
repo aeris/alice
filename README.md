@@ -37,3 +37,5 @@ You can do this on the `.env.production` file (managed by [`dotenv-rails`](https
  * [norore](https://norore.fr/)
 
 Favicon is made by [Pixel Perfect](https://www.flaticon.com/authors/pixel-perfect) and released under [Flaticon Basic License](https://file000.flaticon.com/downloads/license/license.pdf)
+
+We use [![BrowserStack](https://i.imgur.com/ZQsHeQV.png)](https://www.browserstack.com/) for UI testing on different browsers and devices.
